@@ -1,6 +1,5 @@
 import cmd
 
-
 class ProgramLoop(cmd.Cmd):
 
     """Simple program loop for Initiative.py"""
@@ -65,57 +64,35 @@ class ProgramLoop(cmd.Cmd):
             print(e)
     
     def do_toggle_hidden(self, arg):
-        pass
-    
+        """
+        Toggle the hidden status on the given entry
+        """
+
     def do_copy_entry(self, arg):
         pass
+    
+
+    def __apply_hp_change(self, action_name: str , action_func: callable):
+        """Apply a healing or damage action to selected entries by index."""
+        self.do_hprint(None)
+        try:
+            response = input(f"Indexes of the entries you want to {action_name} (space-separated): ")
+            amount = int(input("Amount: "))
+            for index in response.split():
+                index = int(index)
+                if index > len(self.initiative.roster.keys()):
+                    raise ValueError
+                action_func(index - 1, amount)
+        except ValueError:
+            print(f"{action_name} failed: Invalid index or value provided")
 
     def do_heal(self, arg):
-        """
-        Decrement each entry's Current HP value by the given amount
-
-        Usage: heal
-        """
-        self.do_hprint(None)
-        try:
-            # Prompt for indexes of entries and healing value
-            response = input("Indexes of the entries you want to heal (space-separated): ")
-            healing = int(input("Enter amount of healing: "))
-            for index in response.split():
-                index = int(index)
-                if index > len(self.initiative.roster.keys()):
-                    raise ValueError
-
-
-                self.initiative.heal(index - 1, healing)
-
-        except ValueError as e:
-            print("heal failed: Invalid index or healing value provided")
-            return
-
+        """Apply healing to a number of entries"""
+        self.__apply_hp_change("heal", self.initiative.heal)
 
     def do_damage(self, arg):
-        """
-        Decrement each entry's Current HP value by the given amount
-
-        Usage: damage
-        """
-        self.do_hprint(None)
-        try:
-            # Prompt for indexes of entries and damage value
-            response = input("Indexes of the entries you want to damage (space-separated): ")
-            damage = int(input("Enter amount of damage: "))
-            for index in response.split():
-                index = int(index)
-                if index > len(self.initiative.roster.keys()):
-                    raise ValueError
-
-
-                self.initiative.damage(index - 1, damage)
-
-        except ValueError as e:
-            print("damage failed: Invalid index or damage value provided")
-            return
+        """Apply damage to a number of entries"""
+        self.__apply_hp_change("damage", self.initiative.damage)
 
     def do_modify(self, arg):
         """ """
@@ -203,3 +180,6 @@ class ProgramLoop(cmd.Cmd):
         else:
             nonblank_params = {key: value for key, value in params.items() if value}
             self.initiative.add_to_initiative(**nonblank_params)
+    
+    def do_EOF(self, arg):
+        raise KeyboardInterrupt
