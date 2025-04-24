@@ -34,7 +34,7 @@ class ProgramLoop(cmd.Cmd):
 
     def do_hprint(self, arg):
         """
-        Prints the roster with hidden members
+        Prints the roster with hidden members shown
 
         Usage: hprint
         """
@@ -43,7 +43,7 @@ class ProgramLoop(cmd.Cmd):
 
     def do_export(self, arg):
         """
-        Exports the current roster to the given filepath; this will overwrite the given file
+        Exports the roster to the given filepath, overwriting the given file
 
         Usage: export FILEPATH
         """
@@ -55,7 +55,7 @@ class ProgramLoop(cmd.Cmd):
 
     def do_import(self, arg):
         """
-        Import a roster from the given file; this will overwrite the current roster
+        Import a roster from the given file overwriting the current roster
 
         Usage: import FILEPATH
         """
@@ -71,11 +71,22 @@ class ProgramLoop(cmd.Cmd):
         """
 
     def do_copy_entry(self, arg):
-        pass
+        self.do_hprint(None)
+        try:
+            index = int(
+                input(f"Index of the entry you want to copy (space-separated): ")
+            )
+            amount = int(input("Number of copies: "))
+
+            self.initiative.copy_index(index - 1, amount)
+
+        except ValueError:
+            print(f"copy_entry failed: [FIXME]")
 
     def __apply_hp_change(self, action_name: str, action_func: callable):
-        """Apply a healing or damage action to selected entries by index."""
+        """Apply a healing or damage action to selected entries by index"""
         self.do_hprint(None)
+        # TODO: smarter exception handling
         try:
             response = input(
                 f"Indexes of the entries you want to {action_name} (space-separated): "
@@ -84,10 +95,10 @@ class ProgramLoop(cmd.Cmd):
             for index in response.split():
                 index = int(index)
                 if index > len(self.initiative.roster.keys()):
-                    raise ValueError
+                    raise ValueError("Invalid index provided")
                 action_func(index - 1, amount)
-        except ValueError:
-            print(f"{action_name} failed: Invalid index or value provided")
+        except ValueError as e:
+            print(f"{action_name} failed:", e)
 
     def do_heal(self, arg):
         """Apply healing to a number of entries"""

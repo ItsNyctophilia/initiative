@@ -6,7 +6,7 @@ from src.helpers import strlen
 
 class Initiative:
 
-    """"""
+    """Class that tracks turn order, stats, and conditions"""
 
     def __init__(self):
         """ """
@@ -42,7 +42,7 @@ class Initiative:
     def decrement_index(self, index, key, amount):
         self.increment_index(index, key, -amount)
 
-    def increment_index(self, index, key, amount):
+    def __get_sorted_roster(self):
         sorted_roster = [
             {name: self.roster[name]}
             for name in sorted(
@@ -51,22 +51,38 @@ class Initiative:
                 reverse=True,
             )
         ]
+        return sorted_roster
+
+    def increment_index(self, index, key, amount):
+        sorted_roster = self.__get_sorted_roster()
         entry = list(sorted_roster[index])[0]
         self.__increment_value(entry, key, amount)
 
     def modify_index(self, index, key, value):
-        sorted_roster = [
-            {name: self.roster[name]}
-            for name in sorted(
-                self.roster,
-                key=lambda name: self.roster[name]["initiative"],
-                reverse=True,
-            )
-        ]
+        sorted_roster = self.__get_sorted_roster()
         entry = list(sorted_roster[index])[0]
         self.__modify_value(entry, key, value)
 
-    def __get_hp_ws(self, hp, hp_max):
+    def copy_index(self, index, amount):
+        sorted_roster = self.__get_sorted_roster()
+        entry = list(sorted_roster[index])[0]
+
+        if not entry.split()[-1].isnumeric():
+            self.roster[f"{entry} 1"] = self.roster[entry]
+            self.roster.pop(entry)
+            entry = f"{entry} 1"
+            amount -= 1
+
+        existing_copies = sum(
+            1 for n in self.roster.keys() if n.split()[:-1] == entry.split()[:-1]
+        )
+        for i in range(amount):
+            self.roster[
+                f"{' '.join(entry.split()[:-1])} {existing_copies + 1}"
+            ] = self.roster[entry]
+            existing_copies += 1
+
+    def __get_hp_ws(self, hp: int, hp_max: int) -> str:
         max_hp_entry = max(self.roster.values(), key=lambda x: x["hp"] + x["hp_max"])
         max_hp_entry_len = strlen(max_hp_entry["hp"]) + strlen(max_hp_entry["hp_max"])
         return f"{' ' * (max_hp_entry_len - strlen(hp) - strlen(hp_max))}"
