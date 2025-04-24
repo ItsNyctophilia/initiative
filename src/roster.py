@@ -64,8 +64,8 @@ class Initiative:
         entry = list(sorted_roster[index])[0]
         self.__modify_value(entry, key, value)
 
-    def print_roster(self, with_hidden=True):
-        """Prints the roster with hidden information shown"""
+    def print_roster(self, with_hidden=False):
+        """Prints the roster without hidden information shown"""
         # TODO: Reverse with_hidden syntax
         # TODO: return str instead of printing to terminal directly
         # Iterate through a sorted version of the roster
@@ -117,8 +117,8 @@ class Initiative:
                     print(f"{entry_string}")
 
     def hprint_roster(self):
-        """Prints the roster with"""
-        self.print_roster(False)
+        """Prints the roster with hidden information shown"""
+        self.print_roster(True)
 
     def import_file(self, path):
         """Imports a json-formatted file as initiative data"""

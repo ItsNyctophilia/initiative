@@ -29,7 +29,7 @@ class ProgramLoop(cmd.Cmd):
         Usage: print
         """
         self.__print_initiative_prelude()
-        self.initiative.print_roster(with_hidden=False)
+        self.initiative.print_roster()
 
     def do_hprint(self, arg):
         """
@@ -38,7 +38,7 @@ class ProgramLoop(cmd.Cmd):
         Usage: hprint
         """
         self.__print_initiative_prelude()
-        self.initiative.print_roster(with_hidden=True)
+        self.initiative.hprint_roster()
 
     def do_export(self, arg):
         """
