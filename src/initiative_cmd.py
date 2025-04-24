@@ -1,5 +1,6 @@
 import cmd
 
+
 class ProgramLoop(cmd.Cmd):
 
     """Simple program loop for Initiative.py"""
@@ -62,7 +63,7 @@ class ProgramLoop(cmd.Cmd):
         # TODO: -And this
         except (FileNotFoundError, PermissionError) as e:
             print(e)
-    
+
     def do_toggle_hidden(self, arg):
         """
         Toggle the hidden status on the given entry
@@ -70,13 +71,14 @@ class ProgramLoop(cmd.Cmd):
 
     def do_copy_entry(self, arg):
         pass
-    
 
-    def __apply_hp_change(self, action_name: str , action_func: callable):
+    def __apply_hp_change(self, action_name: str, action_func: callable):
         """Apply a healing or damage action to selected entries by index."""
         self.do_hprint(None)
         try:
-            response = input(f"Indexes of the entries you want to {action_name} (space-separated): ")
+            response = input(
+                f"Indexes of the entries you want to {action_name} (space-separated): "
+            )
             amount = int(input("Amount: "))
             for index in response.split():
                 index = int(index)
@@ -180,6 +182,6 @@ class ProgramLoop(cmd.Cmd):
         else:
             nonblank_params = {key: value for key, value in params.items() if value}
             self.initiative.add_to_initiative(**nonblank_params)
-    
+
     def do_EOF(self, arg):
         raise KeyboardInterrupt

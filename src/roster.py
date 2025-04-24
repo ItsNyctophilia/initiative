@@ -30,10 +30,10 @@ class Initiative:
             self.roster[entry][key] = value
         except KeyError as e:
             raise e
-    
+
     def damage(self, index, amount):
         self.decrement_index(index, "hp", amount)
-    
+
     def heal(self, index, amount):
         self.increment_index(index, "hp", amount)
 
@@ -65,19 +65,26 @@ class Initiative:
         self.__modify_value(entry, key, value)
 
     def print_roster(self, with_hidden=True):
+        """Prints the roster with hidden information shown"""
+        # TODO: Reverse with_hidden syntax
         # TODO: return str instead of printing to terminal directly
         # Iterate through a sorted version of the roster
-        for idx, name in enumerate(
-            sorted(
-                self.roster,
-                key=lambda name: int(self.roster[name]["initiative"]),
-                reverse=True,
-            )
-        ):
+
+        sorted_roster = sorted(
+            self.roster,
+            key=lambda name: int(self.roster[name]["initiative"]),
+            reverse=True,
+        )
+        for idx, name in enumerate(sorted_roster, start=1):
+            # Printing without hidden info displays only indexes for shown entries
+            if not with_hidden:
+                idx = sum(
+                    1 for n in sorted_roster[:idx] if not self.roster[n]["hidden"]
+                )
             entries = self.roster[name]
 
             # Set defaults for variable string fields
-            entry_string = f"{idx + 1}. [{entries['initiative']}] {name}"
+            entry_string = f"{idx}. [{entries['initiative']}] {name}"
             hp_string = ""
             ac_string = ""
             # Only print HP/AC values if not None
@@ -110,6 +117,7 @@ class Initiative:
                     print(f"{entry_string}")
 
     def hprint_roster(self):
+        """Prints the roster with"""
         self.print_roster(False)
 
     def import_file(self, path):
