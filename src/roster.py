@@ -1,4 +1,5 @@
 import json
+
 from termcolor import colored
 from random import randint
 from copy import deepcopy
@@ -15,8 +16,12 @@ class Initiative:
         """ """
         self.roster = {}
 
+    def toggle_hidden(self, index):
+        """Toggles the hidden attribute on the given entry"""
+        self.get_entry_at_index(index).toggle_hidden()
+
     def rename_entry(self, index: int, new_key: str) -> None:
-        """ """
+        """Renames an entry and its .name attribute to new_key"""
         self.roster[new_key] = self.roster.pop(self.get_entry_at_index(index).name)
         self.modify_index(index, "name", new_key)
 
@@ -33,7 +38,7 @@ class Initiative:
                 roll = randint(1, die)
             rolls.append(roll)
 
-        return sum(rolls + modifier)
+        return sum(rolls) + modifier
 
     def get_entry_at_index(self, index):
         return self.__get_sorted_roster()[index]
@@ -67,6 +72,8 @@ class Initiative:
             new_entry = f"{' '.join(entry.split()[:-1])} {existing_copies + 1}"
             self.roster[new_entry] = deepcopy(self.roster[entry])
             self.roster[new_entry].name = new_entry
+            if self.roster[new_entry].init_bonus:
+                self.roster[new_entry].initiative = self.roll(modifier=self.roster[new_entry].init_bonus)
             existing_copies += 1
 
     def __get_hp_ws(self, hp: int, hp_max: int) -> str:
@@ -159,7 +166,7 @@ class Initiative:
     def add_to_initiative(
         self,
         name: str,
-        initiative: int,
+        initiative: str,
         ac: int = 0,
         hp_max: int = 0,
         hp: int = 0,
@@ -168,12 +175,15 @@ class Initiative:
         """Adds the given entry to the initiative roster"""
         # TODO: Check for existing entry
 
-        # TODO: Check for +/- in initiative to roll
         self.roster[name] = Entry(
             name,
-            initiative=int(initiative),
             ac=int(ac),
             hp_max=int(hp_max),
             hp=int(hp),
             hidden=int(hidden),
         )
+        if initiative.startswith("+") or initiative.startswith("-"):
+            self.roster[name].init_bonus = int(initiative)
+            self.roster[name].initiative = self.roll(modifier=int(initiative))
+        else:
+            self.roster[name].initiative = int(initiative)

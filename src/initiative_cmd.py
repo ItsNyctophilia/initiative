@@ -68,6 +68,14 @@ class ProgramLoop(cmd.Cmd):
         """
         Toggle the hidden status on the given entry
         """
+        self.do_hprint(None)
+        try:
+            index = int(input(f"Index of the entry you want to un/hide: "))
+
+            self.initiative.toggle_hidden(index - 1)
+
+        except ValueError:
+            print(f"toggle_hidden failed: [FIXME]")
 
     def do_rename(self, arg):
         """
@@ -81,9 +89,10 @@ class ProgramLoop(cmd.Cmd):
             self.initiative.rename_entry(index - 1, new_name)
 
         except ValueError:
-            print(f"copy_entry failed: [FIXME]")
+            print(f"rename failed: [FIXME]")
 
-    def do_copy_entry(self, arg):
+    def do_copy(self, arg):
+        """Copy an entry a number of times"""
         self.do_hprint(None)
         try:
             index = int(input(f"Index of the entry you want to copy: "))
@@ -92,7 +101,7 @@ class ProgramLoop(cmd.Cmd):
             self.initiative.copy_index(index - 1, amount)
 
         except ValueError:
-            print(f"copy_entry failed: [FIXME]")
+            print(f"copy failed: [FIXME]")
 
     def __apply_hp_change(self, action_name: str, action_func: callable):
         """Apply a healing or damage action to selected entries by index"""
@@ -120,7 +129,7 @@ class ProgramLoop(cmd.Cmd):
         self.__apply_hp_change("damage", self.initiative.damage)
 
     def do_modify(self, arg):
-        """ """
+        """Apply a modification to an entry's attributes"""
         # Provide hprint for context
         self.do_hprint(None)
         try:
