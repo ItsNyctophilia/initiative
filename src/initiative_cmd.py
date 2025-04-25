@@ -69,12 +69,24 @@ class ProgramLoop(cmd.Cmd):
         Toggle the hidden status on the given entry
         """
 
+    def do_rename(self, arg):
+        """
+        Rename a given entry
+        """
+        self.do_hprint(None)
+        try:
+            index = int(input(f"Index of the entry you want to rename: "))
+            new_name = input("New name: ")
+
+            self.initiative.rename_entry(index - 1, new_name)
+
+        except ValueError:
+            print(f"copy_entry failed: [FIXME]")
+
     def do_copy_entry(self, arg):
         self.do_hprint(None)
         try:
-            index = int(
-                input(f"Index of the entry you want to copy (space-separated): ")
-            )
+            index = int(input(f"Index of the entry you want to copy: "))
             amount = int(input("Number of copies: "))
 
             self.initiative.copy_index(index - 1, amount)
@@ -122,18 +134,17 @@ class ProgramLoop(cmd.Cmd):
             for idx, option in enumerate(options, start=1):
                 print(f"{idx} {option}")
             key = input("Index of the field you want to modify: ")
-            match key:
-                case "1":
-                    key = "initiative"
-                case "2":
-                    key = "ac"
-                case "3":
-                    key = "hp_max"
-                case "4":
-                    key = "hp"
-                case _:
-                    print(f"{key} is not a valid index")
-                    raise ValueError
+            if key == "1":
+                key = "initiative"
+            elif key == "2":
+                key = "ac"
+            elif key == "3":
+                key = "hp_max"
+            elif key == "4":
+                key = "hp"
+            else:
+                print(f"{key} is not a valid index")
+                raise ValueError
 
             value = int(input("Enter a new value: "))
 

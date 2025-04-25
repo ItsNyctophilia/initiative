@@ -15,8 +15,10 @@ class Initiative:
         """ """
         self.roster = {}
 
-    def rename_entry(self, key, new_key):
+    def rename_entry(self, index: int, new_key: str) -> None:
         """ """
+        self.roster[new_key] = self.roster.pop(self.get_entry_at_index(index).name)
+        self.modify_index(index, "name", new_key)
 
     # TODO: Put in its own class?
     def roll(
