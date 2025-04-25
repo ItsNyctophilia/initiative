@@ -13,7 +13,6 @@ class ProgramLoop(cmd.Cmd):
   | || | | | | |_| | (_| | |_| |\ V /  __/
  |___|_| |_|_|\__|_|\__,_|\__|_| \_/ \___|
  =========================================\n"""
-    initiative = None
 
     def register_initiative(self, initiative_obj):
         """Registers an initiative object to the ProgramLoop"""
